@@ -112,7 +112,16 @@ public class SpiLoader {
                         if (strArray.length > 1) {
                             String key = strArray[0].trim();
                             String className = strArray[1].trim();
-                            keyClassMap.put(key, Class.forName(className));
+                            try {
+                                Class<?> clazz = Class.forName(className);
+                                keyClassMap.put(key, clazz);
+                                log.info("添加 " + className);
+                            } catch (NoClassDefFoundError e) {
+                                log.warn("未添加 " + className + "，将无法使用");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     }
                 } catch (Exception e) {

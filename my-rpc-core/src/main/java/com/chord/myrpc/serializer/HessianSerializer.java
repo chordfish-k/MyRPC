@@ -5,10 +5,13 @@ import com.caucho.hessian.io.HessianOutput;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 
 public class HessianSerializer implements Serializer {
+
+    // 静态new一个对象，用于SpiLoader的Class.forName：如果服务没有依赖Hessian，这句会提示HessianSerializer不可用
+    static {
+        new HessianOutput();
+    }
 
     @Override
     public <T> byte[] serialize(T object) throws IOException {

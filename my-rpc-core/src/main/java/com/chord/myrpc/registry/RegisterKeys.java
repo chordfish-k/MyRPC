@@ -5,4 +5,6 @@ public interface RegisterKeys {
     String ETCD = "etcd";
 
     String ZOOKEEPER = "zookeeper";
+
+    String REDIS = "redis";
 }

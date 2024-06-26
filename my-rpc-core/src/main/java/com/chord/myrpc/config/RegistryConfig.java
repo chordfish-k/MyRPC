@@ -1,5 +1,6 @@
 package com.chord.myrpc.config;
 
+import com.chord.myrpc.registry.RegisterKeys;
 import lombok.Data;
 
 /**
@@ -10,12 +11,12 @@ public class RegistryConfig {
     /**
      * 注册中心类别
      */
-    private String registry = "etcd";
+    private String registry = RegisterKeys.ETCD;
 
     /**
      * 注册中心地址
      */
-    private String address = "http://localhost:2380";
+    private String address;
 
     /**
      * 用户名
@@ -34,9 +35,26 @@ public class RegistryConfig {
 
 
     public String getAddress() {
+        if (address == null || address.isEmpty()) {
+            address = "http://localhost:" + getDefaultPortByRegisterType();
+            return address;
+        }
         if (address.startsWith("http")) {
             return address;
         }
         return "http://" + address;
+    }
+
+    private String getDefaultPortByRegisterType() {
+        if (registry.equals(RegisterKeys.ETCD)) {
+            return "2380";
+        }
+        if (registry.equals(RegisterKeys.ZOOKEEPER)) {
+            return "2181";
+        }
+        if (registry.equals(RegisterKeys.REDIS)) {
+            return "6379";
+        }
+        return "8080";
     }
 }
