@@ -14,6 +14,7 @@ import com.chord.myrpc.registry.RegistryFactory;
 import com.chord.myrpc.serializer.JdkSerializer;
 import com.chord.myrpc.serializer.Serializer;
 import com.chord.myrpc.serializer.SerializerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * 服务代理 (JDK 动态代理)
  */
+@Slf4j
 public class ServiceProxy implements InvocationHandler {
 
     /**
@@ -71,9 +73,11 @@ public class ServiceProxy implements InvocationHandler {
                 // 反序列化
                 RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
                 return rpcResponse.getData();
+            } catch (Exception e) {
+                log.error(e.getMessage());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }

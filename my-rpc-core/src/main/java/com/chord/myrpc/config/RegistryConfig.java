@@ -31,4 +31,12 @@ public class RegistryConfig {
      * 超时时间（10000ms=10s）
      */
     private Long timeout = 10000L;
+
+
+    public String getAddress() {
+        if (address.startsWith("http")) {
+            return address;
+        }
+        return "http://" + address;
+    }
 }

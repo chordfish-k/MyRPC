@@ -1,2 +1,3 @@
 etcd=com.chord.myrpc.registry.EtcdRegistry
 zookeeper=com.chord.myrpc.registry.ZkRegistry
+redis=com.chord.myrpc.registry.RedisRegistry
