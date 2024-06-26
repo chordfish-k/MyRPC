@@ -29,7 +29,7 @@ public class EtcdRegistry implements Registry {
     private static final String ETCD_ROOT_PATH = "/rpc/";
 
     /**
-     * 本机注册的节点 key 集合（用于维护续期）
+     * 通过本机注册的节点 key 集合（用于维护续期）
      */
     private final Set<String> localRegisterNodeKeySet = new HashSet<>();
 
@@ -101,6 +101,14 @@ public class EtcdRegistry implements Registry {
     @Override
     public void destroy() {
         System.out.println("当前节点下线");
+        // 遍历本节点所有key
+        for (String key : localRegisterNodeKeySet) {
+            try {
+                kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8)).get();
+            } catch (Exception e) {
+                throw new RuntimeException(key + "节点下线失败");
+            }
+        }
         // 释放资源
         if (kvClient != null) {
             kvClient.close();
