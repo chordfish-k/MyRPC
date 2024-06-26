@@ -83,7 +83,7 @@ public class ZkRegistry implements Registry {
 
         // 添加节点 key 信息到本地缓存
         final String ZK_ROOT_PATH = "/" + RpcApplication.getRpcConfig().getName();
-        final String registerKey = ZK_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
+        final String registerKey = ZK_ROOT_PATH + "/" + serviceMetaInfo.getServiceNodeKey();
         localRegisterNodeKeySet.add(registerKey);
     }
 
@@ -96,7 +96,7 @@ public class ZkRegistry implements Registry {
         }
         // 将节点 key 从本地缓存移除
         final String ZK_ROOT_PATH = "/" + RpcApplication.getRpcConfig().getName();
-        final String registerKey = ZK_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
+        final String registerKey = ZK_ROOT_PATH + "/" + serviceMetaInfo.getServiceNodeKey();
         localRegisterNodeKeySet.remove(registerKey);
     }
 
@@ -107,10 +107,6 @@ public class ZkRegistry implements Registry {
         if (cachedServiceMetaInfoList != null) {
             return cachedServiceMetaInfoList;
         }
-
-        // 前缀搜索，结尾一定要加 '/'
-        final String ZK_ROOT_PATH = "/" + RpcApplication.getRpcConfig().getName();
-        final String searchPrefix = ZK_ROOT_PATH + serviceKey + "/";
 
         try {
             // 查询服务信息
@@ -133,6 +129,7 @@ public class ZkRegistry implements Registry {
         // 下线节点（可以不做，服务下线临时节点自然被删掉）
         for (String key : localRegisterNodeKeySet) {
             try {
+                System.out.println(key);
                 client.delete().guaranteed().forPath(key);
             } catch (Exception e) {
                 throw new RuntimeException(key + "节点下线失败");
