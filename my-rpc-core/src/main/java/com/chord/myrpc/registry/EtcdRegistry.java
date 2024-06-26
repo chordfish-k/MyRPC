@@ -1,18 +1,20 @@
 package com.chord.myrpc.registry;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.cron.CronUtil;
+import cn.hutool.cron.task.Task;
 import cn.hutool.json.JSONUtil;
 import com.chord.myrpc.config.RegistryConfig;
 import com.chord.myrpc.model.ServiceMetaInfo;
 import io.etcd.jetcd.*;
-import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EtcdRegistry implements Registry {
@@ -26,6 +28,11 @@ public class EtcdRegistry implements Registry {
      */
     private static final String ETCD_ROOT_PATH = "/rpc/";
 
+    /**
+     * 本机注册的节点 key 集合（用于维护续期）
+     */
+    private final Set<String> localRegisterNodeKeySet = new HashSet<>();
+
     @Override
     public void init(RegistryConfig registryConfig) {
         client = Client.builder()
@@ -33,6 +40,7 @@ public class EtcdRegistry implements Registry {
                 .connectTimeout(Duration.ofMillis(registryConfig.getTimeout()))
                 .build();
         kvClient = client.getKVClient();
+        startHearBeat();
     }
 
     @Override
@@ -53,11 +61,17 @@ public class EtcdRegistry implements Registry {
         // 将键值对与租约关联起来，设置过期时间
         PutOption putOption = PutOption.builder().withLeaseId(leaseId).build();
         kvClient.put(key, value, putOption).get();
+
+        // 添加节点 key 信息到本地缓存
+        localRegisterNodeKeySet.add(registerKey);
     }
 
     @Override
     public void unRegister(ServiceMetaInfo serviceMetaInfo) {
-        kvClient.delete(ByteSequence.from(ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey(), StandardCharsets.UTF_8));
+        String registerKey = ETCD_ROOT_PATH + serviceMetaInfo.getServiceNodeKey();
+        kvClient.delete(ByteSequence.from(registerKey, StandardCharsets.UTF_8));
+        // 将节点 key 从本地缓存移除
+        localRegisterNodeKeySet.remove(registerKey);
     }
 
     @Override
@@ -96,23 +110,36 @@ public class EtcdRegistry implements Registry {
         }
     }
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-        // 创建etcd客户端
-        Client client = Client.builder().endpoints("http://localhost:2379").build();
+    @Override
+    public void startHearBeat() {
+        // 10 秒续签一次
+        CronUtil.schedule("*/10 * * * * *", new Task() {
+            @Override
+            public void execute() {
+                // 遍历本节点所有 key
+                for (String key : localRegisterNodeKeySet) {
+                    try {
+                        List<KeyValue> keyValues = kvClient.get(ByteSequence.from(key, StandardCharsets.UTF_8))
+                                .get()
+                                .getKvs();
+                        // 该节点已过期（需要重新启动节点）
+                        if (CollUtil.isEmpty(keyValues)) {
+                            continue;
+                        }
+                        // 节点未过期。重新注册（续签）
+                        KeyValue keyValue = keyValues.get(0);
+                        String value = keyValue.getValue().toString(StandardCharsets.UTF_8);
+                        ServiceMetaInfo serviceMetaInfo = JSONUtil.toBean(value, ServiceMetaInfo.class);
+                        register(serviceMetaInfo);
+                    } catch (Exception e) {
+                        throw new RuntimeException(key + "续签失败", e);
+                    }
+                }
+            }
+        });
 
-        // kvClient：用于对 etcd 中的键值对进行操作
-        KV kvClient = client.getKVClient();
-        ByteSequence key = ByteSequence.from("test_key".getBytes());
-        ByteSequence value = ByteSequence.from("test_value".getBytes());
-
-        // put 键值对
-        kvClient.put(key, value);
-
-        // get
-        CompletableFuture<GetResponse> getFuture = kvClient.get(key);
-        GetResponse response = getFuture.get();
-
-        // delete
-        kvClient.delete(key).get();
+        // 支持秒级别定时任务
+        CronUtil.setMatchSecond(true);
+        CronUtil.start();
     }
 }
