@@ -16,7 +16,7 @@ public class RpcApplication {
 
     public static void init(RpcConfig config) {
         rpcConfig = config;
-        log.info("RPC init, config = {}", config.toString());
+        log.info("RPC 初始化, config = {}", config.toString());
     }
 
     /**

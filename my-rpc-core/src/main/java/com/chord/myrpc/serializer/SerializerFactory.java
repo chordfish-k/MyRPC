@@ -2,9 +2,6 @@ package com.chord.myrpc.serializer;
 
 import com.chord.myrpc.spi.SpiLoader;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 序列化器工厂
  */
@@ -25,7 +22,6 @@ public class SerializerFactory {
      * @return
      */
     public static Serializer getInstance(String key) {
-        System.out.println(key);
         return SpiLoader.getInstance(Serializer.class, key);
     }
 }
