@@ -1,1 +1,2 @@
 etcd=com.chord.myrpc.registry.EtcdRegistry
+zookeeper=com.chord.myrpc.registry.ZkRegistry

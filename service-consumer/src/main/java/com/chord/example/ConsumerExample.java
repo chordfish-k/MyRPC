@@ -24,5 +24,25 @@ public class ConsumerExample {
                 System.out.println("user == null");
             }
         }
+
+        // 测试rpc调用
+        if (userService != null) {
+            User newUser = userService.getUser(user);
+            if (newUser != null) {
+                System.out.println(newUser.getName());
+            } else {
+                System.out.println("user == null");
+            }
+        }
+
+        // 测试rpc调用
+        if (userService != null) {
+            User newUser = userService.getUser(user);
+            if (newUser != null) {
+                System.out.println(newUser.getName());
+            } else {
+                System.out.println("user == null");
+            }
+        }
     }
 }
