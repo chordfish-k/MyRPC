@@ -1,7 +1,10 @@
 package com.chord.myrpc;
 
+import com.chord.myrpc.config.RegistryConfig;
 import com.chord.myrpc.config.RpcConfig;
 import com.chord.myrpc.constant.RpcConstant;
+import com.chord.myrpc.registry.Registry;
+import com.chord.myrpc.registry.RegistryFactory;
 import com.chord.myrpc.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +20,12 @@ public class RpcApplication {
     public static void init(RpcConfig config) {
         rpcConfig = config;
         log.info("RPC 初始化, config = {}", config.toString());
+
+        // 注册中心初始化
+        RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
+        Registry registry = RegistryFactory.getInstance(registryConfig.getRegistry());
+        registry.init(registryConfig);
+        log.info("注册中心初始化, config = {}", registryConfig);
     }
 
     /**
