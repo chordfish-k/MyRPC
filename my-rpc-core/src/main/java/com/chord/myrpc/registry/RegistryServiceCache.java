@@ -4,7 +4,7 @@ import com.chord.myrpc.model.ServiceMetaInfo;
 
 import java.util.List;
 
-public class RegistryServiceCache {
+public class RegistryServiceCache implements KeyEventListener{
 
     /**
      * 服务缓存
@@ -32,5 +32,12 @@ public class RegistryServiceCache {
      */
     void clearCache() {
         this.serviceCache = null;
+    }
+
+    @Override
+    public void notify(KeyEventType type) {
+        if (type == KeyEventType.Delete || type == KeyEventType.Change) {
+            clearCache();
+        }
     }
 }

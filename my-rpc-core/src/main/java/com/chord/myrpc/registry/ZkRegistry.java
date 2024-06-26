@@ -159,8 +159,8 @@ public class ZkRegistry implements Registry {
                     // 执行删除和更改操作都删除缓存
                     CuratorCacheListener
                             .builder()
-                            .forDeletes(childData -> registryServiceCache.clearCache())
-                            .forChanges((oldNode, node) -> registryServiceCache.clearCache())
+                            .forDeletes(childData -> registryServiceCache.notify(KeyEventType.Delete))
+                            .forChanges((oldNode, node) -> registryServiceCache.notify(KeyEventType.Change))
                             .build()
             );
         }

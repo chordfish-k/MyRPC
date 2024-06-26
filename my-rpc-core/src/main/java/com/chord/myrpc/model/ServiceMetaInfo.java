@@ -3,6 +3,8 @@ package com.chord.myrpc.model;
 import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 服务注册信息（元信息）
  */
@@ -35,6 +37,11 @@ public class ServiceMetaInfo {
      */
     private String serviceGroup = "default";
 
+    /**
+     * 注册时间
+     */
+    private LocalDateTime registryTime;
+
 
     /**
      * 获取服务键名
@@ -62,5 +69,12 @@ public class ServiceMetaInfo {
             return String.format("http://%s:%s", serviceHost, servicePort);
         }
         return String.format("%s:%s", serviceHost, servicePort);
+    }
+
+    /**
+     * 设置注册时间
+     */
+    public void setRegistryTimeNow() {
+        registryTime = LocalDateTime.now();
     }
 }
