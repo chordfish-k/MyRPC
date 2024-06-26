@@ -1,5 +1,7 @@
 package com.chord.myrpc.serializer;
 
+import com.chord.myrpc.spi.SpiLoader;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,20 +10,14 @@ import java.util.Map;
  */
 public class SerializerFactory {
 
-    /**
-     * 序列化器映射
-     */
-    private static final Map<String, Serializer> KEY_SERIALIZER_MAP = new HashMap<>() {{
-        put(SerializerKeys.JDK, new JdkSerializer());
-        put(SerializerKeys.JSON, new JsonSerializer());
-        put(SerializerKeys.KRYO, new KryoSerializer());
-        put(SerializerKeys.HESSIAN, new HessianSerializer());
-    }};
+    static {
+        SpiLoader.load(Serializer.class);
+    }
 
     /**
      * 默认序列化器
      */
-    private static final Serializer DEFAULT_SERIALIZER = KEY_SERIALIZER_MAP.get(SerializerKeys.JDK);
+    private static final Serializer DEFAULT_SERIALIZER = new JdkSerializer();
 
     /**
      * 获取实例
@@ -30,6 +26,6 @@ public class SerializerFactory {
      */
     public static Serializer getInstance(String key) {
         System.out.println(key);
-        return KEY_SERIALIZER_MAP.getOrDefault(key, DEFAULT_SERIALIZER);
+        return SpiLoader.getInstance(Serializer.class, key);
     }
 }

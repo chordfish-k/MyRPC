@@ -1,0 +1,4 @@
+jdk=com.chord.myrpc.serializer.JdkSerializer
+json=com.chord.myrpc.serializer.JsonSerializer
+kryo=com.chord.myrpc.serializer.KryoSerializer
+hessian=com.chord.myrpc.serializer.HessianSerializer
