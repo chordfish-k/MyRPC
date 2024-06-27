@@ -6,9 +6,9 @@ package com.chord.myrpc.protocol;
 public interface ProtocolConstant {
 
     /**
-     * 消息头长度：1+1+1+1+1+8+4=17
+     * 消息头长度：1+1+(0.5+0.5)+1+8+4=16
      */
-    int MESSAGE_HEADER_LENGTH = 17;
+    int MESSAGE_HEADER_LENGTH = 16;
 
     /**
      * 协议魔数

@@ -1,13 +1,17 @@
 package com.chord.myrpc.server.tcp;
 
 import com.chord.myrpc.server.HttpServer;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
+import io.vertx.core.parsetools.RecordParser;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 基于 Vert.x 的Tcp服务器
  */
+@Slf4j
 public class VertxTcpServer implements HttpServer {
 
     private byte[] handleRequest(byte[] requestData) {

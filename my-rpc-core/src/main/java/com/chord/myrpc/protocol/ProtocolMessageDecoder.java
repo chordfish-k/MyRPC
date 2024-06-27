@@ -1,5 +1,6 @@
 package com.chord.myrpc.protocol;
 
+import cn.hutool.core.util.ByteUtil;
 import com.chord.myrpc.model.RpcRequest;
 import com.chord.myrpc.model.RpcResponse;
 import com.chord.myrpc.serializer.Serializer;
@@ -29,11 +30,11 @@ public class ProtocolMessageDecoder {
         }
         header.setMagic(magic);
         header.setVersion(buffer.getByte(1));
-        header.setSerializer(buffer.getByte(2));
-        header.setType(buffer.getByte(3));
-        header.setStatus(buffer.getByte(4));
-        header.setRequestId(buffer.getLong(5));
-        header.setBodyLength(buffer.getInt(13));
+        header.setSerializer((byte) (buffer.getByte(2) >> 4));
+        header.setType((byte) ((byte)(buffer.getByte(2) << 4) >> 4));
+        header.setStatus(buffer.getByte(3));
+        header.setRequestId(buffer.getLong(4));
+        header.setBodyLength(buffer.getInt(12));
 
         // 解决粘包问题，只读指定长度的数据
         byte[] bodyBytes = buffer.getBytes(ProtocolConstant.MESSAGE_HEADER_LENGTH,

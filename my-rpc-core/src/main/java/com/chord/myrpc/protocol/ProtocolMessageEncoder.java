@@ -28,8 +28,7 @@ public class ProtocolMessageEncoder {
         Buffer buffer = Buffer.buffer();
         buffer.appendByte(header.getMagic());
         buffer.appendByte(header.getVersion());
-        buffer.appendByte(header.getSerializer());
-        buffer.appendByte(header.getType());
+        buffer.appendByte((byte) (header.getSerializer() << 4 | header.getType()));
         buffer.appendByte(header.getStatus());
         buffer.appendLong(header.getRequestId());
 
