@@ -17,7 +17,7 @@ public class VertxTcpClient {
 
         vertx.createNetClient().connect(8888, "localhost", result -> {
             if (result.succeeded()) {
-                System.out.println("连接到TCP服务器");
+                System.out.println("连接到 TCP 服务器");
                 NetSocket socket = result.result();
                 // 发送数据
                 socket.write("Hello, server!");
@@ -27,7 +27,7 @@ public class VertxTcpClient {
                 });
             }
             else {
-                System.out.println("连接TCP服务器失败");
+                System.out.println("连接 TCP 服务器失败");
             }
         });
     }

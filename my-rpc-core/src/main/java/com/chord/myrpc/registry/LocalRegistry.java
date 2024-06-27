@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 之后就可以根据要调用的服务名称获取到对应的实现类，然后通过反射进行方法调用了。</p>
  * <p> 服务提供者启动时，需要注册服务到注册器中 </p>
  */
-@Deprecated
 public class LocalRegistry {
 
     private static final Map<String, Class<?>> map = new ConcurrentHashMap<>();

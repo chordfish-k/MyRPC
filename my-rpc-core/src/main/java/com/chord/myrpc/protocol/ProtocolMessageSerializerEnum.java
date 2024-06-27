@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +43,20 @@ public enum ProtocolMessageSerializerEnum {
     public static ProtocolMessageSerializerEnum getEnumByKey(int key) {
         for (ProtocolMessageSerializerEnum anEnum : ProtocolMessageSerializerEnum.values()) {
             if (anEnum.key == key) {
+                return anEnum;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据 value 获取枚举
+     * @param value
+     * @return
+     */
+    public static ProtocolMessageSerializerEnum getEnumByValue(String value) {
+        for (ProtocolMessageSerializerEnum anEnum : ProtocolMessageSerializerEnum.values()) {
+            if (Objects.equals(anEnum.value, value)) {
                 return anEnum;
             }
         }

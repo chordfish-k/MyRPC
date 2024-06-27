@@ -11,6 +11,7 @@ import com.chord.myrpc.registry.Registry;
 import com.chord.myrpc.registry.RegistryFactory;
 import com.chord.myrpc.server.HttpServer;
 import com.chord.myrpc.server.VertxHttpServer;
+import com.chord.myrpc.server.tcp.VertxTcpServer;
 
 /**
  * 增强版RPC项目的示例提供者
@@ -42,8 +43,11 @@ public class ProviderExample {
 
 
         // 启动web服务
-        HttpServer httpServer = new VertxHttpServer();
-        httpServer.start(RpcApplication.getRpcConfig().getServerPort());
+//        HttpServer httpServer = new VertxHttpServer();
+//        httpServer.start(RpcApplication.getRpcConfig().getServerPort());
 
+        // 启动 TCP 服务
+        VertxTcpServer vertxTcpServer = new VertxTcpServer();
+        vertxTcpServer.start(RpcApplication.getRpcConfig().getServerPort());
     }
 }

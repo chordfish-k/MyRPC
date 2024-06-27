@@ -24,17 +24,7 @@ public class VertxTcpServer implements HttpServer {
         NetServer server = vertx.createNetServer();
 
         // 处理请求
-        server.connectHandler(socket -> {
-            // 处理连接
-            socket.handler(buffer -> {
-                // 处理接收到的字节数组
-                byte[] requestData = buffer.getBytes();
-                // 自定义处理逻辑
-                byte[] responseData = handleRequest(requestData);
-                // 发送响应
-                socket.write(Buffer.buffer(responseData));
-            });
-        });
+        server.connectHandler(new TcpServerHandler());
 
         // 启动HTTP服务器并监听指定端口
         server.listen(port, result -> {

@@ -1,12 +1,13 @@
 <configuration>  <!-- <1>  -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%level [%thread] %logger{0} - %msg%n</pattern>  <!-- <2>  -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{0} - %msg%n</pattern>  <!-- <2>  -->
         </encoder>
     </appender>
 
     <!--netty太多无用日志，设置成warn-->
     <logger name="io.netty" level="warn"/>  <!-- <3>  -->
+    <logger name="io.grpc" level="warn"/>  <!-- <3>  -->
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>
