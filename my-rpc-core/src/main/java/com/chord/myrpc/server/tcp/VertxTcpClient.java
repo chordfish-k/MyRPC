@@ -43,6 +43,9 @@ public class VertxTcpClient {
                         System.err.println("连接 TCP 服务器失败");
                         return;
                     }
+                    log.debug("RPC: {}.{} -> host={}, post={}",
+                            serviceMetaInfo.getServiceName().substring(serviceMetaInfo.getServiceName().lastIndexOf(".")+1),
+                            rpcRequest.getMethodName(), serviceMetaInfo.getServiceHost(), serviceMetaInfo.getServicePort());
                     NetSocket socket = result.result();
                     // 发送数据
                     // 构造消息

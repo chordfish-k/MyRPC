@@ -7,6 +7,8 @@ import com.chord.myrpc.registry.LocalRegistry;
 import com.chord.myrpc.server.HttpServer;
 import com.chord.myrpc.server.VertxHttpServer;
 
+import java.util.Arrays;
+
 /**
  * 服务提供者启动类
  */
@@ -14,7 +16,7 @@ public class ServiceProviderExample {
 
     public static void main(String[] args) {
         // RPC框架初始化
-        RpcApplication.init();
+        RpcApplication.init(Arrays.asList(args));
 
         // 注册服务
         LocalRegistry.register(UserService.class.getName(), UserServiceImpl.class);

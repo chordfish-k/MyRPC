@@ -13,6 +13,10 @@ import com.chord.myrpc.server.HttpServer;
 import com.chord.myrpc.server.VertxHttpServer;
 import com.chord.myrpc.server.tcp.VertxTcpServer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 增强版RPC项目的示例提供者
  */
@@ -20,7 +24,7 @@ public class ProviderExample {
 
     public static void main(String[] args) {
         // RPC框架初始化
-        RpcApplication.init();
+        RpcApplication.init(Arrays.asList(args));
 
         // 注册服务
         String serviceName = UserService.class.getName();

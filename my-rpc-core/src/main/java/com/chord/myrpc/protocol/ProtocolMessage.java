@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class ProtocolMessage<T> {
 
     /**
-     * 消息头
+     * 消息头 12Byte = 96bit
      */
     private Header header;
 

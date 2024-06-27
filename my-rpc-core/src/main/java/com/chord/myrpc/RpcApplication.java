@@ -8,6 +8,9 @@ import com.chord.myrpc.registry.RegistryFactory;
 import com.chord.myrpc.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * RPC框架应用<br>
  * 存放了项目全局用到的遍历。双检锁单例模式
@@ -34,10 +37,10 @@ public class RpcApplication {
     /**
      * 初始化
      */
-    public static void init() {
+    public static void init(List<String> args) {
         RpcConfig config;
         try {
-            config = ConfigUtils.loadConfig(RpcConfig.class, RpcConstant.DEFAULT_CONFIG_PREFIX);
+            config = ConfigUtils.loadConfig(RpcConfig.class, RpcConstant.DEFAULT_CONFIG_PREFIX, args);
         } catch (Exception e) {
             // 加载配置失败，使用默认值
             config = new RpcConfig();
@@ -54,7 +57,7 @@ public class RpcApplication {
         if (rpcConfig == null) {
             synchronized (RpcApplication.class) {
                 if (rpcConfig == null) {
-                    init();
+                    init(new ArrayList<>());
                 }
             }
         }

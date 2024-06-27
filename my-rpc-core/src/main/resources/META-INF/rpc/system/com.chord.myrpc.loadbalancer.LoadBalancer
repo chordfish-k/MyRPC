@@ -1,0 +1,3 @@
+roundRobin=com.chord.myrpc.loadbalancer.RoundRobinLoadBalancer
+random=com.chord.myrpc.loadbalancer.RandomLoadBalancer
+consistentHash=com.chord.myrpc.loadbalancer.ConsistentHashLoadBalancer
