@@ -14,9 +14,14 @@ public class RegistryConfig {
     private String registry = RegisterKeys.ETCD;
 
     /**
-     * 注册中心地址
+     * 注册中心ip
      */
-    private String address;
+    private String host = "localhost";
+
+    /**
+     * 注册中心端口
+     */
+    private Integer port = 2380;
 
     /**
      * 用户名
@@ -35,26 +40,22 @@ public class RegistryConfig {
 
 
     public String getAddress() {
-        if (address == null || address.isEmpty()) {
-            address = "http://localhost:" + getDefaultPortByRegisterType();
-            return address;
+        if (port == null) {
+            port = getDefaultPortByRegisterType();
         }
-        if (address.startsWith("http")) {
-            return address;
-        }
-        return "http://" + address;
+        return "http://" + host + ":" + port;
     }
 
-    private String getDefaultPortByRegisterType() {
+    private Integer getDefaultPortByRegisterType() {
         if (registry.equals(RegisterKeys.ETCD)) {
-            return "2380";
+            return 2380;
         }
         if (registry.equals(RegisterKeys.ZOOKEEPER)) {
-            return "2181";
+            return 2181;
         }
         if (registry.equals(RegisterKeys.REDIS)) {
-            return "6379";
+            return 6379;
         }
-        return "8080";
+        return 2380;
     }
 }

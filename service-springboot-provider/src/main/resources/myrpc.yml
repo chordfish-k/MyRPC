@@ -5,3 +5,5 @@ rpc:
     version: 1.0.1
     registryConfig:
         registry: etcd
+        host: localhost
+        port: 2380
