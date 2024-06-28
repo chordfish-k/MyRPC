@@ -9,6 +9,7 @@ import com.chord.myrpc.RpcApplication;
 import com.chord.myrpc.config.RegistryConfig;
 import com.chord.myrpc.model.ServiceMetaInfo;
 import io.etcd.jetcd.ByteSequence;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class RedisRegistry extends JedisPubSub implements Registry {
 
     private URI uri;
@@ -103,6 +105,7 @@ public class RedisRegistry extends JedisPubSub implements Registry {
 
     @Override
     public void destroy() {
+        log.info("当前节点下线");
         // 清理所有注册的服务
         for (String key : localRegisterNodeKeySet) {
             try {

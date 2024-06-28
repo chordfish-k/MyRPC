@@ -1,0 +1,7 @@
+rpc:
+    name: myrpc
+    serializer: json
+    serverPort: 8888
+    version: 1.0.1
+    registryConfig:
+        registry: etcd

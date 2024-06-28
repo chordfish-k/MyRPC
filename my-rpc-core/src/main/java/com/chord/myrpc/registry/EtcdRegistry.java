@@ -12,6 +12,7 @@ import io.etcd.jetcd.*;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.options.PutOption;
 import io.etcd.jetcd.watch.WatchEvent;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class EtcdRegistry implements Registry {
 
     private Client client;
@@ -124,9 +126,10 @@ public class EtcdRegistry implements Registry {
 
     @Override
     public void destroy() {
-        System.out.println("当前节点下线");
+        log.info("当前节点下线");
         // 遍历本节点所有key
         for (String key : localRegisterNodeKeySet) {
+            System.out.println(key);
             try {
                 kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8)).get();
             } catch (Exception e) {

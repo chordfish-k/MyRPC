@@ -1,9 +1,18 @@
 package com.chord.myrpc.utils;
 
+import cn.hutool.core.io.resource.Resource;
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.setting.dialect.Props;
+import cn.hutool.setting.yaml.YamlUtil;
+import com.chord.myrpc.config.RpcConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 
+import java.io.File;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -45,23 +54,54 @@ public class ConfigUtils {
      * @param <T>
      */
     private static <T> T loadConfig(Class<T> clazz, String prefix, List<String> args, String env) {
-        StringBuilder configFileBuilder = new StringBuilder("application");
+        StringBuilder configFileBuilder = new StringBuilder("myrpc");
         if (StrUtil.isNotBlank(env)) {
             configFileBuilder.append("-").append(env);
         }
-        configFileBuilder.append(".properties");
-        Props props = new Props(configFileBuilder.toString());
-        // 遍历args并覆盖
-        for (int i = 0; i < args.size(); i++) {
-            String arg = args.get(i);
-            if (arg.startsWith("--")) {
-                String[] kv = arg.substring(2).split("=");
-                Assert.assertEquals(2, kv.length);
-                props.setProperty(kv[0], kv[1]);
+
+        // 将props里的以prefix开头的项填入对象
+        T res = null;
+
+        try {
+            Props props = new Props(configFileBuilder + ".properties");
+            // 遍历args并覆盖
+            if (args != null) {
+                for (int i = 0; i < args.size(); i++) {
+                    String arg = args.get(i);
+                    if (arg.startsWith("--")) {
+                        String[] kv = arg.substring(2).split("=");
+                        Assert.assertEquals(2, kv.length);
+                        props.setProperty(kv[0], kv[1]);
+                    }
+                }
+            }
+            res = props.toBean(clazz, prefix);
+        } catch (Exception e) {
+            res = loadOtherSuffixConfig(clazz, prefix, configFileBuilder.toString(), "yml");
+            if (res == null) {
+                res = loadOtherSuffixConfig(clazz, prefix, configFileBuilder.toString(), "yaml");
             }
         }
-        // 将props里的以prefix开头的项填入对象
-        T res = props.toBean(clazz, prefix);
+
+        return res;
+    }
+
+    private static  <T> T loadOtherSuffixConfig(Class<T> clazz, String cfgPrefix, String cfgName, String fileSuffix) {
+        T res = null;
+        Resource resource = null;
+        try {
+            resource = ResourceUtil.getResourceObj(cfgName + "." + fileSuffix);
+        } catch (Exception e) {
+            return res;
+        }
+
+        Dict dict = YamlUtil.load(resource.getReader(StandardCharsets.UTF_8));
+        Object cfg = dict.get(cfgPrefix);
+        // 转换成 clazz 类对象
+        if (cfg != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            res = mapper.convertValue(cfg, clazz);
+        }
         return res;
     }
 }

@@ -1,15 +1,22 @@
 <configuration>  <!-- <1>  -->
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{0} - %msg%n</pattern>  <!-- <2>  -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n
+            </pattern>
         </encoder>
     </appender>
 
-    <!--netty太多无用日志，设置成warn-->
-    <logger name="io.netty" level="warn"/>  <!-- <3>  -->
-    <logger name="io.grpc" level="warn"/>  <!-- <3>  -->
+    <!--禁用部分无用日志-->
+    <logger name="io.netty" level="warn"/>
+    <logger name="io.grpc" level="warn"/>
+    <logger name="org.springframework.boot.autoconfigure" level="error"/>
+    <logger name="org.springframework.test.context.cache" level="error"/>
+    <logger name="org.springframework.beans.factory.support" level="error"/>
 
-    <root level="debug">
+
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 

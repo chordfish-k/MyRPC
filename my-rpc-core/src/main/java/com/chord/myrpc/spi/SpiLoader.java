@@ -100,9 +100,6 @@ public class SpiLoader {
         if(loaderMap.containsKey(loadClass.getName())) {
             return loaderMap.get(loadClass.getName());
         }
-        if (loadClass.getName().equals("com.chord.myrpc.fault.retry.RetryStrategy")){
-            System.out.println(loadClass.getName());
-        }
         log.info("加载类型为 {} 的 SPI", loadClass.getName());
         // 扫描路径，用户自定义的SPI优先级(覆盖顺序)高于系统SPI
         Map<String, Class<?>> keyClassMap = new HashMap<>();
@@ -122,7 +119,7 @@ public class SpiLoader {
                             try {
                                 Class<?> clazz = Class.forName(className);
                                 keyClassMap.put(key, clazz);
-                                log.info("添加 " + className);
+                                log.debug("添加 " + className);
                             } catch (NoClassDefFoundError e) {
                                 log.warn("未添加 " + className + "，将无法使用");
                             } catch (Exception e) {

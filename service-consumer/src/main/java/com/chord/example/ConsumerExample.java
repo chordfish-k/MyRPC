@@ -2,6 +2,7 @@ package com.chord.example;
 
 import com.chord.example.common.model.User;
 import com.chord.example.common.service.UserService;
+import com.chord.myrpc.bootstrap.ConsumerBootstrap;
 import com.chord.myrpc.config.RpcConfig;
 import com.chord.myrpc.proxy.ServiceProxyFactory;
 import com.chord.myrpc.utils.ConfigUtils;
@@ -12,6 +13,9 @@ import com.chord.myrpc.utils.ConfigUtils;
 public class ConsumerExample {
 
     public static void main(String[] args) {
+        // 服务消费者初始化
+        ConsumerBootstrap.init(args);
+
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User user = new User();
         user.setName("Chord");

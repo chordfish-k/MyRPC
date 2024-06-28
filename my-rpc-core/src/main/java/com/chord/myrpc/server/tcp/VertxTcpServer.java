@@ -33,9 +33,9 @@ public class VertxTcpServer implements HttpServer {
         // 启动HTTP服务器并监听指定端口
         server.listen(port, result -> {
             if (result.succeeded()) {
-                System.out.println("TCP服务器正在监听 " + port + " 端口");
+                log.info("RPC 服务器正在监听 " + port + " 端口");
             } else {
-                System.out.println("TCP服务器启动失败: " + result.cause());
+                log.error("RPC 服务器启动失败: " + result.cause());
             }
         });
     }

@@ -21,7 +21,7 @@ public class RpcApplication {
 
     private static volatile RpcConfig rpcConfig;
 
-    public static void init(RpcConfig config) {
+    private static void init(RpcConfig config) {
         rpcConfig = config;
         log.info("RPC 初始化, config = {}", config.toString());
 
@@ -42,6 +42,20 @@ public class RpcApplication {
         RpcConfig config;
         try {
             config = ConfigUtils.loadConfig(RpcConfig.class, RpcConstant.DEFAULT_CONFIG_PREFIX, args);
+        } catch (Exception e) {
+            // 加载配置失败，使用默认值
+            config = new RpcConfig();
+        }
+        init(config);
+    }
+
+    /**
+     * 初始化
+     */
+    public static void init() {
+        RpcConfig config;
+        try {
+            config = ConfigUtils.loadConfig(RpcConfig.class, RpcConstant.DEFAULT_CONFIG_PREFIX);
         } catch (Exception e) {
             // 加载配置失败，使用默认值
             config = new RpcConfig();

@@ -1,17 +1,10 @@
 package com.chord.myrpc.registry;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ConcurrentHashSet;
-import cn.hutool.cron.CronUtil;
-import cn.hutool.cron.task.Task;
-import cn.hutool.json.JSONUtil;
 import com.chord.myrpc.RpcApplication;
 import com.chord.myrpc.config.RegistryConfig;
 import com.chord.myrpc.model.ServiceMetaInfo;
-import io.etcd.jetcd.*;
-import io.etcd.jetcd.options.GetOption;
-import io.etcd.jetcd.options.PutOption;
-import io.etcd.jetcd.watch.WatchEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.CuratorCache;
@@ -22,14 +15,13 @@ import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ZkRegistry implements Registry {
 
     private CuratorFramework client;
@@ -125,7 +117,7 @@ public class ZkRegistry implements Registry {
 
     @Override
     public void destroy() {
-        System.out.println("当前节点下线");
+        log.info("当前节点下线");
         // 下线节点（可以不做，服务下线临时节点自然被删掉）
         for (String key : localRegisterNodeKeySet) {
             try {
