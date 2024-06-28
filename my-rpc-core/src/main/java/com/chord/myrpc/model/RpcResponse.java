@@ -1,5 +1,8 @@
 package com.chord.myrpc.model;
 
+import com.chord.myrpc.serializer.JsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +36,7 @@ public class RpcResponse implements Serializable {
     private String message;
 
     /**
-     * 异常信息
+     * 是否得到了异常
      */
-    private Exception exception;
+    private Boolean exception;
 }

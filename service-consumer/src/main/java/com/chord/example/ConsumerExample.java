@@ -16,33 +16,9 @@ public class ConsumerExample {
         User user = new User();
         user.setName("Chord");
         // 测试rpc调用
-        if (userService != null) {
-            User newUser = userService.getUser(user);
-            if (newUser != null) {
-                System.out.println(newUser.getName());
-            } else {
-                System.out.println("user == null");
-            }
-        }
+        User newUser = userService.getUser(user);
+        System.out.println(newUser == null ? "user == null" : newUser.getName());
 
-        // 测试rpc调用
-        if (userService != null) {
-            User newUser = userService.getUser(user);
-            if (newUser != null) {
-                System.out.println(newUser.getName());
-            } else {
-                System.out.println("user == null");
-            }
-        }
-
-        // 测试rpc调用
-        if (userService != null) {
-            User newUser = userService.getUser(user);
-            if (newUser != null) {
-                System.out.println(newUser.getName());
-            } else {
-                System.out.println("user == null");
-            }
-        }
+//        userService.getError();
     }
 }

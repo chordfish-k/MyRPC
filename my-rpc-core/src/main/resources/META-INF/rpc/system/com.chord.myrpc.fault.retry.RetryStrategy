@@ -1,0 +1,2 @@
+no=com.chord.myrpc.fault.retry.NoRetryStrategy
+fixed=com.chord.myrpc.fault.retry.FixedIntervalRetryStrategy

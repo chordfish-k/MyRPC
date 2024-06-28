@@ -2,6 +2,7 @@ package com.chord.myrpc.protocol;
 
 import com.chord.myrpc.serializer.Serializer;
 import com.chord.myrpc.serializer.SerializerFactory;
+import com.chord.myrpc.spi.SpiFactory;
 import io.vertx.core.buffer.Buffer;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class ProtocolMessageEncoder {
         if (serializerEnum == null) {
             throw new RuntimeException("序列化器不存在");
         }
-        Serializer serializer = SerializerFactory.getInstance(serializerEnum.getValue());
+        Serializer serializer = SpiFactory.getInstance(Serializer.class, serializerEnum.getValue());
         byte[] bodyBytes = serializer.serialize(protocolMessage.getBody());
 
         // 写入 body 长度和数据

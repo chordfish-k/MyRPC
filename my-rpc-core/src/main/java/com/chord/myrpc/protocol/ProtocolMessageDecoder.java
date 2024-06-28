@@ -5,6 +5,7 @@ import com.chord.myrpc.model.RpcRequest;
 import com.chord.myrpc.model.RpcResponse;
 import com.chord.myrpc.serializer.Serializer;
 import com.chord.myrpc.serializer.SerializerFactory;
+import com.chord.myrpc.spi.SpiFactory;
 import io.vertx.core.buffer.Buffer;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class ProtocolMessageDecoder {
         if (serializerEnum == null) {
             throw new RuntimeException("消息指定的序列化器不存在");
         }
-        Serializer serializer = SerializerFactory.getInstance(serializerEnum.getValue());
+        Serializer serializer = SpiFactory.getInstance(Serializer.class, serializerEnum.getValue());
         ProtocolMessageTypeEnum messageTypeEnum = ProtocolMessageTypeEnum.getEnumByKey(header.getType());
         if (messageTypeEnum == null) {
             throw new RuntimeException("消息指定的类型不存在");

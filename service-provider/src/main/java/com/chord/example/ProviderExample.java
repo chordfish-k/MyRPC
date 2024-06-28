@@ -12,6 +12,7 @@ import com.chord.myrpc.registry.RegistryFactory;
 import com.chord.myrpc.server.HttpServer;
 import com.chord.myrpc.server.VertxHttpServer;
 import com.chord.myrpc.server.tcp.VertxTcpServer;
+import com.chord.myrpc.spi.SpiFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class ProviderExample {
         // 注册服务到注册中心
         RpcConfig rpcConfig = RpcApplication.getRpcConfig();
         RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
-        Registry registry = RegistryFactory.getInstance(registryConfig.getRegistry());
+        Registry registry = SpiFactory.getInstance(Registry.class, registryConfig.getRegistry());
         ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
         serviceMetaInfo.setServiceName(serviceName);
         serviceMetaInfo.setServiceHost(rpcConfig.getServerHost());
@@ -44,11 +45,6 @@ public class ProviderExample {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-
-        // 启动web服务
-//        HttpServer httpServer = new VertxHttpServer();
-//        httpServer.start(RpcApplication.getRpcConfig().getServerPort());
 
         // 启动 TCP 服务
         VertxTcpServer vertxTcpServer = new VertxTcpServer();

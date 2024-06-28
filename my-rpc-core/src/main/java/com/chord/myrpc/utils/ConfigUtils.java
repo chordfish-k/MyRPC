@@ -60,9 +60,6 @@ public class ConfigUtils {
                 props.setProperty(kv[0], kv[1]);
             }
         }
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue());
-        }
         // 将props里的以prefix开头的项填入对象
         T res = props.toBean(clazz, prefix);
         return res;

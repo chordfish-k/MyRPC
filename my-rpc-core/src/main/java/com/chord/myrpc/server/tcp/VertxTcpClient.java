@@ -1,5 +1,6 @@
 package com.chord.myrpc.server.tcp;
 
+import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.chord.myrpc.RpcApplication;
 import com.chord.myrpc.model.RpcRequest;
@@ -31,7 +32,7 @@ public class VertxTcpClient {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public static RpcResponse request(RpcRequest rpcRequest, ServiceMetaInfo serviceMetaInfo) throws InterruptedException, ExecutionException {
+    public static RpcResponse request(RpcRequest rpcRequest, ServiceMetaInfo serviceMetaInfo) throws Exception {
         // 发送 TCP 请求
         // 创建 Vert.x 实例
         Vertx vertx = Vertx.vertx();
@@ -40,10 +41,9 @@ public class VertxTcpClient {
         netClient.connect(serviceMetaInfo.getServicePort(), serviceMetaInfo.getServiceHost(),
                 result -> {
                     if (!result.succeeded()) {
-                        System.err.println("连接 TCP 服务器失败");
-                        return;
+                        throw new RuntimeException("连接 TCP 服务器失败");
                     }
-                    log.debug("RPC: {}.{} -> host={}, post={}",
+                    log.debug("发起 RPC: {}.{} -> host={}, post={}",
                             serviceMetaInfo.getServiceName().substring(serviceMetaInfo.getServiceName().lastIndexOf(".")+1),
                             rpcRequest.getMethodName(), serviceMetaInfo.getServiceHost(), serviceMetaInfo.getServicePort());
                     NetSocket socket = result.result();
@@ -81,7 +81,7 @@ public class VertxTcpClient {
                                     // 完成异步
                                     responseFuture.complete(rpcResponseProtocolMessage.getBody());
                                 } catch (IOException e) {
-                                    throw new RuntimeException("协议消息解码错误");
+                                    throw new RuntimeException("协议消息解码错误", e);
                                 }
                             }
                     );
@@ -93,6 +93,11 @@ public class VertxTcpClient {
         RpcResponse rpcResponse = responseFuture.get();
 
         netClient.close();
+
+        if (BooleanUtil.isTrue(rpcResponse.getException())) {
+            throw new RuntimeException("from " +serviceMetaInfo.getServiceHost() +":"+ serviceMetaInfo.getServicePort() + ": " + rpcResponse.getMessage());
+
+        }
         return rpcResponse;
     }
 }

@@ -7,6 +7,7 @@ import com.chord.myrpc.registry.LocalRegistry;
 import com.chord.myrpc.serializer.JdkSerializer;
 import com.chord.myrpc.serializer.Serializer;
 import com.chord.myrpc.serializer.SerializerFactory;
+import com.chord.myrpc.spi.SpiFactory;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
@@ -23,7 +24,7 @@ public class VertxHttpServerHandler implements Handler<HttpServerRequest> {
     @Override
     public void handle(HttpServerRequest request) {
         // 指定序列化器
-        final Serializer serializer = SerializerFactory.getInstance(RpcApplication.getRpcConfig().getSerializer());
+        final Serializer serializer = SpiFactory.getInstance(Serializer.class, RpcApplication.getRpcConfig().getSerializer());
 
         // 记录日志
         System.out.println("Received request: " + request.method() + " " + request.uri());
@@ -60,7 +61,6 @@ public class VertxHttpServerHandler implements Handler<HttpServerRequest> {
             } catch (Exception e) {
                 e.printStackTrace();
                 rpcResponse.setMessage(e.getMessage());
-                rpcResponse.setException(e);
             }
             // 响应
             doResponse(request, rpcResponse, serializer);

@@ -43,9 +43,10 @@ public class TcpServerHandler implements Handler<NetSocket> {
                         rpcResponse.setDataType(method.getReturnType());
                         rpcResponse.setMessage("ok");
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        rpcResponse.setMessage(e.getMessage());
-                        rpcResponse.setException(e);
+                        Throwable cause = e.getCause();
+                        cause.printStackTrace();
+                        rpcResponse.setMessage(cause.getMessage());
+                        rpcResponse.setException(true);
                     }
 
                     // 编码，发送响应

@@ -5,6 +5,7 @@ import com.chord.myrpc.config.RpcConfig;
 import com.chord.myrpc.constant.RpcConstant;
 import com.chord.myrpc.registry.Registry;
 import com.chord.myrpc.registry.RegistryFactory;
+import com.chord.myrpc.spi.SpiFactory;
 import com.chord.myrpc.utils.ConfigUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,7 @@ public class RpcApplication {
 
         // 注册中心初始化
         RegistryConfig registryConfig = rpcConfig.getRegistryConfig();
-        Registry registry = RegistryFactory.getInstance(registryConfig.getRegistry());
+        Registry registry = SpiFactory.getInstance(Registry.class, registryConfig.getRegistry());
         registry.init(registryConfig);
         log.info("注册中心初始化, config = {}", registryConfig);
 

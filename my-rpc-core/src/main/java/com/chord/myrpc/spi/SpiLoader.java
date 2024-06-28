@@ -96,6 +96,13 @@ public class SpiLoader {
      * @return
      */
     public static Map<String, Class<?>> load(Class<?> loadClass) {
+        // 如果已经加载，则直接返回
+        if(loaderMap.containsKey(loadClass.getName())) {
+            return loaderMap.get(loadClass.getName());
+        }
+        if (loadClass.getName().equals("com.chord.myrpc.fault.retry.RetryStrategy")){
+            System.out.println(loadClass.getName());
+        }
         log.info("加载类型为 {} 的 SPI", loadClass.getName());
         // 扫描路径，用户自定义的SPI优先级(覆盖顺序)高于系统SPI
         Map<String, Class<?>> keyClassMap = new HashMap<>();

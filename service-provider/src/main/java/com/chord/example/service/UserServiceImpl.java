@@ -9,4 +9,9 @@ public class UserServiceImpl implements UserService {
         System.out.println("用户名：" + user.getName());
         return user;
     }
+
+    @Override
+    public void getError() throws RuntimeException {
+        throw new RuntimeException("测试报错");
+    }
 }

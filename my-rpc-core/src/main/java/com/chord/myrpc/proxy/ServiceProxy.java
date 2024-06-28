@@ -1,38 +1,26 @@
 package com.chord.myrpc.proxy;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import com.chord.myrpc.RpcApplication;
 import com.chord.myrpc.config.RpcConfig;
 import com.chord.myrpc.constant.RpcConstant;
+import com.chord.myrpc.fault.retry.RetryStrategy;
 import com.chord.myrpc.loadbalancer.LoadBalancer;
-import com.chord.myrpc.loadbalancer.LoadBalancerFactory;
 import com.chord.myrpc.model.RpcRequest;
 import com.chord.myrpc.model.RpcResponse;
 import com.chord.myrpc.model.ServiceMetaInfo;
-import com.chord.myrpc.protocol.*;
 import com.chord.myrpc.registry.Registry;
-import com.chord.myrpc.registry.RegistryFactory;
-import com.chord.myrpc.serializer.JdkSerializer;
 import com.chord.myrpc.serializer.Serializer;
 import com.chord.myrpc.serializer.SerializerFactory;
 import com.chord.myrpc.server.tcp.VertxTcpClient;
-import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.net.NetClient;
-import io.vertx.core.net.NetSocket;
+import com.chord.myrpc.spi.SpiFactory;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 服务代理 (JDK 动态代理)
@@ -63,7 +51,7 @@ public class ServiceProxy implements InvocationHandler {
         try {
             // 从注册中心获取服务提供者请求地址
             RpcConfig rpcConfig = RpcApplication.getRpcConfig();
-            Registry registry = RegistryFactory.getInstance(rpcConfig.getRegistryConfig().getRegistry());
+            Registry registry = SpiFactory.getInstance(Registry.class, rpcConfig.getRegistryConfig().getRegistry());
             ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo();
             serviceMetaInfo.setServiceName(serviceName);
             serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_SERVICE_VERSION);
@@ -73,17 +61,20 @@ public class ServiceProxy implements InvocationHandler {
             }
 
             // 负载均衡
-            LoadBalancer loadBalancer = LoadBalancerFactory.getInstance(rpcConfig.getLoadBalancer());
+            LoadBalancer loadBalancer = SpiFactory.getInstance(LoadBalancer.class, rpcConfig.getLoadBalancer());
             // 将调用方法名（请求路径）作为负载均衡参数
             Map<String, Object> requestParams = new HashMap<>();
             requestParams.put("clientIP", RpcApplication.getRpcConfig().getServerHost() + ":" + RpcApplication.getRpcConfig().getServerPort());
             ServiceMetaInfo selectedServiceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList);
 
-            // 发送 TCP 请求
-            RpcResponse rpcResponse = VertxTcpClient.request(rpcRequest, selectedServiceMetaInfo);
+            // 发送 TCP 请求，使用重试机制
+            RetryStrategy retryStrategy = SpiFactory.getInstance(RetryStrategy.class, rpcConfig.getRetryStrategy());
+            RpcResponse rpcResponse = retryStrategy.doRetry(() ->
+                    VertxTcpClient.request(rpcRequest, selectedServiceMetaInfo)
+            );
             return rpcResponse.getData();
         } catch (Exception e) {
-            throw new RuntimeException("调用失败");
+            throw e.getCause();
         }
     }
 }
