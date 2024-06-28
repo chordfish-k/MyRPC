@@ -1,0 +1,4 @@
+failBack=com.chord.myrpc.fault.tolerant.FailBackTolerantStrategy
+failFast=com.chord.myrpc.fault.tolerant.FailFastTolerantStrategy
+failOver=com.chord.myrpc.fault.tolerant.FailOverTolerantStrategy
+failSafe=com.chord.myrpc.fault.tolerant.FailSafeTolerantStrategy

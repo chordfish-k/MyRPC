@@ -11,7 +11,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void getError() throws RuntimeException {
+    public Integer getError() throws RuntimeException {
         throw new RuntimeException("测试报错");
     }
 }

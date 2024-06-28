@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
@@ -39,4 +40,16 @@ public class RpcResponse implements Serializable {
      * 是否得到了异常
      */
     private Boolean exception;
+
+    public static RpcResponse failed() {
+        return RpcResponse.builder()
+                .message("failed")
+                .build();
+    }
+
+    public static RpcResponse failed(String msg) {
+        return RpcResponse.builder()
+                .message(msg)
+                .build();
+    }
 }

@@ -1,6 +1,7 @@
 package com.chord.myrpc.config;
 
 import com.chord.myrpc.fault.retry.RetryStrategyKeys;
+import com.chord.myrpc.fault.tolerant.TolerantStrategyKeys;
 import com.chord.myrpc.loadbalancer.LoadBalancerKeys;
 import com.chord.myrpc.serializer.SerializerKeys;
 import lombok.Data;
@@ -55,4 +56,9 @@ public class RpcConfig {
      * 重试策略
      */
     private String retryStrategy = RetryStrategyKeys.NO;
+
+    /**
+     * 容错策略
+     */
+    private String tolerantStrategy = TolerantStrategyKeys.FAIL_FAST;
 }

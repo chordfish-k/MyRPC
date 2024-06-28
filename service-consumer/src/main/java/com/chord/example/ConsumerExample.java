@@ -19,6 +19,6 @@ public class ConsumerExample {
         User newUser = userService.getUser(user);
         System.out.println(newUser == null ? "user == null" : newUser.getName());
 
-//        userService.getError();
+        userService.getError();
     }
 }
