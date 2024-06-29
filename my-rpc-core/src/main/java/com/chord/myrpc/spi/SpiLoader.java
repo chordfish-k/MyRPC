@@ -8,10 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -48,7 +45,7 @@ public class SpiLoader {
     /**
      * 动态加载的类列表
      */
-    private static final List<Class<?>> LOAD_CLASS_LIST = List.of(Serializer.class);
+    private static final List<Class<?>> LOAD_CLASS_LIST = Collections.singletonList(Serializer.class);
 
     /**
      * 加载所有类型
@@ -100,7 +97,7 @@ public class SpiLoader {
         if(loaderMap.containsKey(loadClass.getName())) {
             return loaderMap.get(loadClass.getName());
         }
-        log.info("加载类型为 {} 的 SPI", loadClass.getName());
+        log.info("SPI: 加载类型为 {} 的 实现类", loadClass.getName());
         // 扫描路径，用户自定义的SPI优先级(覆盖顺序)高于系统SPI
         Map<String, Class<?>> keyClassMap = new HashMap<>();
         for (String scanDir : SCAN_DIRS) {
@@ -119,13 +116,10 @@ public class SpiLoader {
                             try {
                                 Class<?> clazz = Class.forName(className);
                                 keyClassMap.put(key, clazz);
-                                log.debug("添加 " + className);
-                            } catch (NoClassDefFoundError e) {
-                                log.warn("未添加 " + className + "，将无法使用");
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                log.info("SPI: 添加 " + className);
+                            } catch (Error | Exception e) {
+                                log.warn("SPI: 未添加 " + key + " 相关依赖，将无法使用");
                             }
-
                         }
                     }
                 } catch (Exception e) {

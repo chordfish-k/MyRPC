@@ -2,6 +2,7 @@ package com.chord.myrpc.bootstrap;
 
 import com.chord.myrpc.RpcApplication;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,6 +23,6 @@ public class ConsumerBootstrap {
      * @param args
      */
     public static void init(String[] args) {
-        RpcApplication.init(List.of(args));
+        RpcApplication.init(Arrays.asList(args));
     }
 }

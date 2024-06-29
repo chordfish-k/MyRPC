@@ -177,7 +177,6 @@ public class RedisRegistry extends JedisPubSub implements Registry {
     public void watch(String serviceNodeKey) {
         // 之前未被监听，开启监听
         watchingKeySet.add(serviceNodeKey);
-        System.out.println("key, "+serviceNodeKey);
     }
 
     @Override
